@@ -17,7 +17,7 @@ double Row::Shensted_insert(double x)
 		return -1;
 	}
 	double new_x = *y;
-	_row.erase(new_x);
+	_row.erase(y);
 	_row.insert(x);
 	return new_x;
 }
