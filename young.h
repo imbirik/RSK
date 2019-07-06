@@ -1,6 +1,10 @@
 #pragma once
-#include <set>
+#include <vector>
 using namespace std;
+int my_lower_bound(const vector<double> &, double);
+int my_upper_bound(const vector<double> &, double);
+bool my_find(const vector<double> &, double);
+
 class Row {
 public:
 	Row(){}
@@ -12,7 +16,7 @@ public:
 	double pop();
 	bool find(double x);
 private:
-	multiset <double> _row;
+	vector <double> _row;
 };
 class Tableaux
 {
@@ -44,8 +48,6 @@ public:
 	int size();
 	int find(double);
 private:
-	Tableaux _P, _Q;
+	Tableaux _P, _Q, _link;
 	vector <int> _row_number;
 };
-double rand_num();
-vector <double> rand_vec(int);

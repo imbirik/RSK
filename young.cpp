@@ -7,27 +7,65 @@
 #include<random>
 using namespace std;
 
+int my_lower_bound(const vector<double> & v, double x)
+{
+	int left = 0, right = int(v.size());
+	while (left < right - 1)
+	{
+		int mid = (left + right) / 2;
+		if (x >= v[mid])
+		{
+			left = mid;
+		}
+		else
+		{
+			right = mid;
+		}
+	}
+	return left;
+}
+
+int my_upper_bound(const vector<double> & v, double x)
+{
+	int left = 0, right = int(v.size());
+	while (left < right - 1)
+	{
+		int mid = (left + right) / 2;
+		if (x > v[mid])
+		{
+			left = mid;
+		}
+		else
+		{
+			right = mid;
+		}
+	}
+	if (!v.empty() && v[left] <= x)
+	{
+		return left + 1;
+	}
+	return left;
+}
+
 int Row::size() {
 	return _row.size();
 }
 double Row::reverse_Shensted_insert(double x)
 {	
-	auto y = (--_row.lower_bound(x));
-	double new_x = *y;
-	_row.erase(y);
-	_row.insert(x);
+	auto y = (my_lower_bound(_row, x) - 1);
+	double new_x = _row[y];
+	_row[y] = x;
 	return new_x;
 }
 double Row::Shensted_insert(double x)
 {
-	auto y = _row.upper_bound(x);
-	if (y == _row.end()) {
-		_row.insert(x);
+	auto y = my_upper_bound(_row, x);
+	if (y == _row.size()) {
+		_row.push_back(x);
 		return -1;
 	}
-	double new_x = *y;
-	_row.erase(y);
-	_row.insert(x);
+	double new_x = _row[y];
+	_row[y] = x;
 	return new_x;
 }
 double Row::pop()
@@ -36,9 +74,26 @@ double Row::pop()
 	_row.erase((--_row.end()));
 	return elem;
 }
+bool my_find(const vector<double> & v, double x)
+{
+	int left = 0, right = int(v.size());
+	while (left < right - 1)
+	{
+		int mid = (left + right) / 2;
+		if (x >= v[mid])
+		{
+			left = mid;
+		}
+		else
+		{
+			right = mid;
+		}
+	}
+	return v[left] == x;
+}
 bool Row::find(double x)
 {
-	return (_row.find(x) != _row.end());
+	return my_find(_row, x);
 }
 ostream& operator<<(ostream& out, Row& obj) {
 	for (auto it : obj._row)
@@ -60,8 +115,9 @@ ostream & operator<<(ostream & out, PQ_tableaux & PQ)
 	// TODO: вставьте здесь оператор return
 }
 Row::Row(vector <double> row) {
+	sort(row.begin(), row.end());
 	for (auto it : row)
-		this->_row.insert(it);
+		this->_row.push_back(it);
 }
 
 int Tableaux::push(double elem)
@@ -124,6 +180,7 @@ int Tableaux::find(double x)
 	return -1;
 }
 
+
 void PQ_tableaux::push(double elem)
 {
 	int changed_row = _P.push(elem);
@@ -174,14 +231,4 @@ int PQ_tableaux::size()
 int PQ_tableaux::find(double x)
 {
 	return(_P.find(x));
-}
-double rand_num() {
-	double x = ((rand() ^ (rand() << 16)) % 1000000) / 1000000.0;
-	return x;
-}
-vector <double> rand_vec(int n){
-	vector <double> vec;
-	for (int i = 0; i < n; i++)
-		vec.push_back(rand_num());
-	return vec;
 }

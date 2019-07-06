@@ -1,20 +1,40 @@
 #include<vector>
 #include<iostream>
 #include "young.h"
+#include "statistics.h"
 #include <set>
 #include<random>
 using namespace std; 
 
 int main() {
-	int n = 60000;
-	for (int my_try = 0; my_try < 100; my_try++) {
+	int n = 10;
+	for (int i = 0; i < 10; i++)
+		cout << i << " ";
+	cout << endl;
+	vector <int> inv = rand_inv(10);
+	for (int i = 0; i < 10; i++)
+		cout << inv[i] << " ";
+	return 0;
+	/*
+	vector<double> stat;
+	for (int my_try = 0; my_try < 200; my_try++) {
 		vector <double> vec = rand_vec(n);
 		PQ_tableaux PQ;
 		PQ.push(vec);
 		for (int i = 0; i < 1; i++)
-			cout << vec[i] << " " << sqrt(PQ.find(vec[i])) / sqrt(n) << " " << vec[i] / ((PQ.find(vec[i]) + 1) / sqrt(n)) << endl;
+		{
+			//cout << vec[i] << " " << PQ.find(vec[i]) / sqrt(n);
+			stat.push_back(PQ.find(vec[i]) / sqrt(n));
+		}
 	}
+	cout << "\n";
+	for (auto it : tightness(stat, 40))
+	{
+		cout << it << ' ';
+	}
+	cout << "\n";
 	return 0;
+	*/
 	/*
 	PQ_tableaux PQ;
 	PQ.push({ 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1 });
