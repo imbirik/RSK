@@ -1,10 +1,12 @@
-#include <set>
-#include<iostream>
-#include<vector>
-#include<algorithm>
-#include<iterator>
-#include"young.h"
-#include<random>
+﻿#include <set>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <iterator>
+#include "young.h"
+#include <random>
+#include <ctime>
+
 using namespace std;
 
 int Row::size() {
@@ -45,29 +47,44 @@ ostream& operator<<(ostream& out, Row& obj) {
 		out << it << ' ';
 	return out;
 }
-ostream & operator<<(ostream & out, Tableaux & T)
+ostream & operator<<(ostream & out, Tableau & T)
 {
-	for (auto it : T._tableaux)
+	for (auto it : T._tableau)
 		if (it.size() != 0)
 			out << it << "\n";
 	return out;
-	// TODO: �������� ����� �������� return
+	// TODO: âñòàâüòå çäåñü îïåðàòîð return
+}
+void print_collection_of_Tableau(vector<Tableau> vect_T)
+{
+	int max_height = 0;
+	for (auto it : vect_T)
+	{
+		max_height = max(max_height, it.size());
+	}
+	for (int tmp_row = 0; tmp_row < max_height; ++tmp_row)
+	{
+		for (auto it : vect_T)
+		{
+
+		}
+	}
 }
 ostream & operator<<(ostream & out, PQ_tableaux & PQ)
 {
 	out << "P:\n" << PQ._P << "Q:\n" << PQ._Q;
 	return out;
-	// TODO: �������� ����� �������� return
+	// TODO: âñòàâüòå çäåñü îïåðàòîð return
 }
 Row::Row(vector <double> row) {
 	for (auto it : row)
 		this->_row.insert(it);
 }
 
-int Tableaux::push(double elem)
+int Tableau::push(double elem)
 {
 	int count = 0;
-	for (auto & it : _tableaux)
+	for (auto & it : _tableau)
 	{
 		auto new_elem = it.Shensted_insert(elem);
 		elem = new_elem;
@@ -77,51 +94,61 @@ int Tableaux::push(double elem)
 	}
 	if (elem != -1)
 	{
-		_tableaux.push_back(Row({ elem }));
+		_tableau.push_back(Row({ elem }));
 	}
 	_size++;
 	return count;
 }
 
-void Tableaux::insert(int row, double x)
+void Tableau::insert(int row, double x)
 {
-	if (row >= _tableaux.size())
-		_tableaux.push_back(Row());
-	_tableaux[row].Shensted_insert(x);
+	if (row >= _tableau.size())
+		_tableau.push_back(Row());
+	_tableau[row].Shensted_insert(x);
 }
 
-void Tableaux::push(vector<double> elems)
+void Tableau::push(vector<double> elems)
 {
 	for (auto it : elems)
 		push(it);
 }
 
-int Tableaux::size()
+int Tableau::size()
 {
 	return _size;
 }
 
-double Tableaux::pop(int row)
+double Tableau::pop(int row)
 {
-	return _tableaux[row].pop();
+	return _tableau[row].pop();
 }
 
-double Tableaux::erase(int tmp_row)
+double Tableau::erase(int tmp_row)
 {
 	double tmp_x = pop(tmp_row);
 	for (int i = tmp_row - 1; i >= 0; --i)
 	{
-		tmp_x = _tableaux[i].reverse_Shensted_insert(tmp_x);
+		tmp_x = _tableau[i].reverse_Shensted_insert(tmp_x);
 	}
 	return tmp_x;
 }
 
-int Tableaux::find(double x)
+int Tableau::find(double x)
 {
-	for (int i = 0; i < _tableaux.size(); i++)
-		if (_tableaux[i].find(x))
+	for (int i = 0; i < _tableau.size(); i++)
+		if (_tableau[i].find(x))
 			return i;
 	return -1;
+}
+
+vector<int> Tableau::type()
+{
+	vector<int> type;
+	for (int i = 0; i < _tableau.size(); ++i)
+	{
+		type.push_back(_tableau[i].size());
+	}
+	return type;
 }
 
 void PQ_tableaux::push(double elem)
@@ -175,6 +202,10 @@ int PQ_tableaux::find(double x)
 {
 	return(_P.find(x));
 }
+vector<int> PQ_tableaux::type()
+{
+	return _P.type();
+}
 double rand_num() {
 	double x = ((rand() ^ (rand() << 16)) % 1000000) / 1000000.0;
 	return x;
@@ -185,3 +216,137 @@ vector <double> rand_vec(int n){
 		vec.push_back(rand_num());
 	return vec;
 }
+
+
+void permutate(vector<double>& value, const vector<int>& permutation)
+{
+	auto new_value = value;
+	for (int i = 0; i < (int)value.size(); ++i)
+	{
+		new_value[permutation[i]] = value[i];
+	}
+	for (int i = 0; i < (int)value.size(); ++i)
+	{
+		value[i] = new_value[i];
+	}
+	return;
+}
+
+int count_identity_points(vector<double>& vec)
+{
+	vector<pair<double, int>> new_vec(vec.size());
+	for (int i = 0; i < (int)vec.size(); ++i)
+	{
+		new_vec[i] = { vec[i], i };
+	}
+	sort(new_vec.begin(), new_vec.end());
+	int identity_points = 0;
+	for (int i = 0; i < (int)vec.size(); ++i)
+	{
+		identity_points += new_vec[i].second == i;
+	}
+	return identity_points;
+}
+int sum(const vector<double>& vec)
+{
+	double sum = 0;
+	for (auto i : vec)
+	{
+		sum += i;
+	}
+	return sum;
+}
+long double get_rand_from_unit_interval()  //я не до конца понял, как работает static, тут какая-то фигня
+{
+	static bool f = false;
+	if (!f)
+	{
+		for (int i = 0; i < 10000; ++i)
+		{
+			cerr << " ";
+		}
+	}
+	f = true;
+	static double tme = clock();
+	srand(tme);
+	double rand_num = ((rand() ^ (rand() << 16)) % 100000) / 100000;
+	return rand_num;
+}
+void init_involution_branch_prob(long double * b, long n)  //count branch prob. for involutions
+{
+	b[1] = 1;
+	for (int i = 1; i < n; ++i)
+	{
+		b[i + 1] = 1 / (1 + i * b[i]);
+	}
+	return;
+}
+template <typename Type>                                               //not finished yet
+inline void random_permute_self_inverse(Type *f, long n,
+	long *tr = 0,
+	long double *tb = 0, bool bi = false)
+	// Permute the elements of f by a random involution.
+	// Set bi:=true to signal that the branch probabilities in tb[]
+	// have been precomputed (via init_involution_branch_ratios()).
+{
+	long *r = tr;
+	if (tr == 0) r = new long[n];
+	for (long k = 0; k < n; ++k) r[k] = k;
+	long nr = n; // number of elements available
+	// available positions are r[0], ..., r[nr-1]
+
+	long double *b = tb;
+	if (tb == 0) { b = new long double[n]; bi = false; }
+	if (!bi) init_involution_branch_prob(b, n);
+	
+	while (nr >= 2)
+	{
+		const long x1 = nr - 1; // choose last element
+		const long r1 = r[x1]; // available position
+		// remove from set:
+		--nr; // no swap needed if x1==last
+			
+		const long double rat = b[nr]; // probability to choose fixed point
+			
+		const long double t = get_rand_from_unit_interval; // 0 <= t < 1
+		if (t > rat) // 2-cycle
+		{
+			const long x2 = rand_idx(nr);
+			const long r2 = r[x2]; // random available position != r1
+			--nr; swap2(r[x2], r[nr]); // remove from set
+			swap2(f[r1], f[r2]); // create a 2-cycle
+		}
+		// else fixed point, nothing to do
+	}
+		
+	if (tr == 0) delete[] r;
+	if (tb == 0) delete[] b;
+}
+ostream& operator <<(ostream& os, const vector<int>& out)  
+{
+	for (auto i : out)
+	{
+		os << i << ' ';
+	}
+	return os;
+}
+ostream& operator <<(ostream& os, const vector<double>& out)
+{
+	for (auto i : out)
+	{
+		os << i << ' ';
+	}
+	return os;
+}
+
+vector<double> operator+(const vector<double> & vec1, const vector<double> & vec2)
+{
+	vector<double> vec_res(max(vec1.size(), vec2.size()));
+	for (int i = 0; i < (int)min(vec1.size(), vec2.size()); ++i)
+	{
+		vec_res[i] = vec1[i] + vec2[i];
+	}
+	return vec_res;
+}
+
+
