@@ -18,30 +18,23 @@ long double branch_prob[MAXN];
 
 
 int main() {
-	freopen("out.txt", "w", stdout);
+	//freopen("out.txt", "w", stdout);
 	freopen("err.txt", "w", stderr);
 
-	long double *b = 0;
-	b = new long double[MAXN];
-	init_involution_branch_prob(b, MAXN);
-	for (int i = 1; i < 10; ++i)
-	{
-		cout << b[i] << " ";
-	}
-	cout << "\n";
+	long b[10];
 	for (int i = 0; i < 10; ++i)
 	{
-		cout << b[MAXN - 10 + i] << " ";
+		b[i] = i;
+		cout << i << ' ';
 	}
-	cout << "\n\n";
-	for (int i = 0; i < 50; ++i)
+	cout << "\n";
+	rand_permute_self_inverse<long>(b, 10);
+	for (int i = 0; i < 10; ++i)
 	{
-		cout << get_rand_from_unit_interval() << "\n";
-		for (int j = 0; j < i * get_rand_from_unit_interval() * 10000; ++j)
-		{
-			cerr << " " << endl;
-		}
+		cout << b[i] << ' ';
 	}
+	cout << "\n";
+
 	/*
 	int n = 6000;
 	for (int my_try = 0; my_try < 100; my_try++) {
@@ -53,6 +46,8 @@ int main() {
 	}
 	*/
 
+
+	/*
 	factorial[0] = 1;                                                //Trying to count some statistics on small sizes of YT
 	for (int i = 1; i < 20; ++i)                                     //Firstly, some precounting
 	{
@@ -101,7 +96,8 @@ int main() {
 		cout << "\n" << "total: " << total << "\n";
 		cout << "id_points statistics for all permutation: " << measure << "\n" << "\n";
 	}
-
+	*/
+	system("pause");
 	return 0;
 	/*
 	PQ_tableaux PQ;

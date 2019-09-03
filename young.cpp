@@ -256,20 +256,21 @@ int sum(const vector<double>& vec)
 	}
 	return sum;
 }
-long double get_rand_from_unit_interval()  //я не до конца понял, как работает static, тут какая-то фигня
+long randN(long N)
+{
+	long tmp = rand() ^ (rand() << 16);
+	return tmp % N;
+}
+long double rand01()  
 {
 	static bool f = false;
 	if (!f)
 	{
-		for (int i = 0; i < 10000; ++i)
-		{
-			cerr << " ";
-		}
+		double tme = time(NULL);
+		srand(tme);
+		f = true;
 	}
-	f = true;
-	static double tme = clock();
-	srand(tme);
-	double rand_num = ((rand() ^ (rand() << 16)) % 100000) / 100000;
+	double rand_num = ((rand() ^ (rand() << 16)) % 100000) / 100000.0;
 	return rand_num;
 }
 void init_involution_branch_prob(long double * b, long n)  //count branch prob. for involutions
@@ -280,47 +281,6 @@ void init_involution_branch_prob(long double * b, long n)  //count branch prob. 
 		b[i + 1] = 1 / (1 + i * b[i]);
 	}
 	return;
-}
-template <typename Type>                                               //not finished yet
-inline void random_permute_self_inverse(Type *f, long n,
-	long *tr = 0,
-	long double *tb = 0, bool bi = false)
-	// Permute the elements of f by a random involution.
-	// Set bi:=true to signal that the branch probabilities in tb[]
-	// have been precomputed (via init_involution_branch_ratios()).
-{
-	long *r = tr;
-	if (tr == 0) r = new long[n];
-	for (long k = 0; k < n; ++k) r[k] = k;
-	long nr = n; // number of elements available
-	// available positions are r[0], ..., r[nr-1]
-
-	long double *b = tb;
-	if (tb == 0) { b = new long double[n]; bi = false; }
-	if (!bi) init_involution_branch_prob(b, n);
-	
-	while (nr >= 2)
-	{
-		const long x1 = nr - 1; // choose last element
-		const long r1 = r[x1]; // available position
-		// remove from set:
-		--nr; // no swap needed if x1==last
-			
-		const long double rat = b[nr]; // probability to choose fixed point
-			
-		const long double t = get_rand_from_unit_interval; // 0 <= t < 1
-		if (t > rat) // 2-cycle
-		{
-			const long x2 = rand_idx(nr);
-			const long r2 = r[x2]; // random available position != r1
-			--nr; swap2(r[x2], r[nr]); // remove from set
-			swap2(f[r1], f[r2]); // create a 2-cycle
-		}
-		// else fixed point, nothing to do
-	}
-		
-	if (tr == 0) delete[] r;
-	if (tb == 0) delete[] b;
 }
 ostream& operator <<(ostream& os, const vector<int>& out)  
 {

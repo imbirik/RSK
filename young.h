@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include <set>
 #include <vector>
 
@@ -61,13 +61,64 @@ vector <double> rand_vec(int);
 
 
 ostream& operator <<(ostream&, const vector<int>&);      //Output operator for vector
-ostream& operator <<(ostream&, const vector<double>&);      //Output operator for vector
+ostream& operator <<(ostream&, const vector<double>&);   //Output operator for vector
 //class template <T>;
-vector<double> operator +(const vector<double>& vec1, const vector<double>& vec2); 
-void permutate(vector<double>&, const vector<int>&);     //Apply permutation to vector
+vector<double> operator +(
+	const vector<double> &,
+	const vector<double> &
+	); 
+void permutate(vector<double> &, const vector<int> &);   //Apply permutation to vector
 int count_identity_points(vector<double>&);              //Count the number of identity points
 int sum(const vector<double>&);
-long double get_rand_from_unit_interval();
+long double rand01();               //Return random number from [0, 1]
+long randN(long N);
 template <typename T>
-inline void rand_permute_self_inverse(T*, long);
-void init_involution_branch_prob(long double*, long);
+inline void rand_permute_self_inverse(
+	T*,	long, long *,
+	long double *, bool);                                //Return involution of length n
+void init_involution_branch_prob(long double*, long);    //Count branch probabilities for generating random involution 
+
+
+//implementation
+
+template <typename T>                                    //not finished yet, надо что-то с деструктором сделать
+inline void rand_permute_self_inverse(T *f, long n,
+	long *tr = 0,
+	long double *tb = 0, bool bi = false)
+	// Permute the elements of f by a random involution.
+	// Set bi:=true to signal that the branch probabilities in tb[]
+	// have been precomputed (via init_involution_branch_ratios()).
+{
+	long *r = tr;
+	if (tr == 0) r = new long[n];
+	for (long k = 0; k < n; ++k) r[k] = k;
+	long nr = n;                                         // number of elements available
+	                                                     // available positions are r[0], ..., r[nr-1]
+
+	long double *b = tb;
+	if (tb == 0) { b = new long double[n]; bi = false; }
+	if (!bi) init_involution_branch_prob(b, n);
+
+	while (nr >= 2)
+	{
+		const long x1 = nr - 1;                           // choose last element
+		const long r1 = r[x1];                            // available position
+		                                                  // remove from set:
+		--nr;                                             // no swap needed if x1==last
+
+		const long double rat = b[nr];                    // probability to choose fixed point
+
+		const long double t = rand01();                   // 0 <= t < 1
+		if (t > rat)                                      // 2-cycle
+		{
+			const long x2 = randN(nr);
+			const long r2 = r[x2];                        // random available position != r1
+			--nr; swap(r[x2], r[nr]);                     // remove from set
+			swap(f[r1], f[r2]);                           // create a 2-cycle
+		}
+		                                                  // else fixed point, nothing to do
+	}
+
+	//if (tr == 0) delete[] r;
+	//if (tb == 0) delete[] b;
+}
