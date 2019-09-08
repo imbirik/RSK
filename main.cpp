@@ -11,29 +11,113 @@
 
 using namespace std; 
 
-const long MAXN = 1e4;
+//const size_t MAXN = (size_t)1e3;                 //size of YT
+const double EPS = 1e-8;
 long long factorial[20];
 //const unsigned int N = 5;
-long double branch_prob[MAXN];
+//long double branch_prob[MAXN];
 
 
 int main() {
-	//freopen("out.txt", "w", stdout);
-	freopen("err.txt", "w", stderr);
+	freopen("out.txt", "w", stdout);
+	//freopen("err.txt", "w", stderr);
+	cout.precision(6);
 
-	long b[10];
-	for (int i = 0; i < 10; ++i)
+	size_t N;
+	cin >> N;
+	double *r = new double[N];
+	rand_arr(r, N);
+
+	PQ_tableaux<double> PQ;
+	cout << "[";
+	for (size_t i = 0; i < N; ++i)
 	{
-		b[i] = i;
-		cout << i << ' ';
+		PQ.push(r[i]);
+		cout << "[";
+		PQ.showP();
+		cout << ", ";
+		PQ.showQ();
+		if (i == N - 1)
+		{
+			cout << "]";
+		}
+		else
+		{
+			cout << "], ";
+		}
 	}
-	cout << "\n";
-	rand_permute_self_inverse<long>(b, 10);
-	for (int i = 0; i < 10; ++i)
+	cout << "]\n";
+	system("pause");
+	/*
+	double add = 1 / (double)MAXN;
+	double r = 0;
+	for (size_t i = 0; i < MAXN; ++i)
 	{
-		cout << b[i] << ' ';
+		ra[i] = r;
+		r += add;
 	}
-	cout << "\n";
+	
+	rand_permute_self_inverse(ra, MAXN);
+	*/
+	/*
+	const long MAN = (long)2e2;
+	long *func = new long[MAN];
+	long *height = new long[MAN];
+	long *length = new long[MAN];
+	for (size_t MAXN = 1; MAXN < MAN; ++MAXN)
+	{
+		cerr << MAXN << "\n";
+		double *ra = 0;
+		ra = new double[MAXN];
+		rand_arr(ra, MAXN);
+		PQ_tableaux<double> PQ;
+		PQ.push(ra, MAXN);
+		height[MAXN] = PQ.height();
+		length[MAXN] = PQ.length();
+
+		double *max_ra = new double[MAXN];
+		for (size_t cnt = 0; cnt * cnt < 16 * MAXN; ++cnt)
+		{
+			for (size_t i = 0; i < MAXN; ++i)
+			{
+				double tmp = 0;
+				for (size_t j = 0; j < i; ++j)
+				{
+					tmp = max(tmp, (ra[j] < ra[i]) ? ra[j] : 0);
+				}
+				max_ra[i] = tmp;
+			}
+			PQ_tableaux<double> PQ_max;
+			PQ_max.push(max_ra, MAXN);
+			if (PQ_max.height() == 1)
+			{
+				func[MAXN] = cnt;
+				break;
+			}
+			for (size_t i = 0; i < MAXN; ++i)
+			{
+				ra[i] = max_ra[i];
+			}
+		}
+	}
+	
+	for (size_t i = 0; i < MAN; ++i)
+	{
+		cout << i << ' ' << func[i] << ' ' << length[i] << ' ' << height[i] << "\n";
+	}
+	*/
+	/*
+	PQ.showP();
+	cout << "\n\n";
+	PQ.truncate(max_ra[9], ra[9]);
+	PQ.showP();
+	cout << "\n\n";
+	PQ.truncate(max_ra[89], ra[89]);
+	PQ.showP();
+	cout << "\n\n";
+	*/
+	
+
 
 	/*
 	int n = 6000;
@@ -97,7 +181,7 @@ int main() {
 		cout << "id_points statistics for all permutation: " << measure << "\n" << "\n";
 	}
 	*/
-	system("pause");
+	//system("pause");
 	return 0;
 	/*
 	PQ_tableaux PQ;
