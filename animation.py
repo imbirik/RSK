@@ -27,36 +27,70 @@ tabluax = read('out.txt')
 #         draw(P, fig=fig, ax=ax)
 #     if show:
 #       plt.show()
+class BumpingTraceAnimation:
 
-fig = plt.figure()
-ax = plt.axes(xlim=(0, 10), ylim=(0, 10))
 
-def draw(tableau, shift=0):
-    global fig, ax
-    y_shape = len(tableau)
-    x_shape = len(tableau[0])
-    rgb = np.zeros([y_shape, x_shape, 3])
-    for i in range(len(tableau)):
-        for j in range(len(tableau[i])):
-            rgb[i][j][0] = 255/255
-            rgb[i][j][1] = 0/255
-            rgb[i][j][2] = 0/255
-    for i in range(len(tableau)):
-        for j in range(len(tableau[i])):
-            text = ''#tableau[i][j]
-            ax.text(j+shift+0.5, i+0.5, text, fontsize=20, ha="center", va="center")
-            frame = matplotlib.patches.Rectangle((j+shift, i), color=rgb[i][j], alpha=0.2, width=1, height=1)
-            ax.add_patch(frame)
+    def __init__(self, trace):
+        self.x_trace = []
+        self.y_trace = []
+        self.fig = plt.figure()
+        self.ax = plt.axes(xlim=(0, 1), ylim=(0, 1))
+        self.line = self.ax.plot([], [], lw=1)
+        for elem in trace:
+            x = elem[0]
+            y = elem[1]
+            scale = elem[2]
+            x = x/scale
+            y = y/scale
+            x_rotated = x/np.sqrt(2) + y/np.sqrt(2)
+            y_rotated = -x/np.sqrt(2) + y/np.sqrt(2)
+            self.x_trace.append(x_rotated)
+            self.x_trace.append(y_rotated)
+        self.dots_number = len(self.x_trace)
+
+    def animate(self, i):
+        self.line.set_data(self.x_trace[: i], y_trace[: i])
+        return self.line
     
-def animate(i):
-    print(i)
-    global tabluax
-    global fig, ax
-    ax.clear()
-    ax.set_xlim(0,70)
-    ax.set_ylim(0,70)
-    draw(tabluax[10*i][0])
-anim = animation.FuncAnimation(fig, animate, frames=len(tabluax)//10, interval = 100)
-plt.show()
-anim.save('C:/result/myanimfast.gif', writer='ffmpeg')
-print('Done')
+    def create_animation(self):
+        anim = animation.FuncAnimation(self.fig, self.animate, frames=self.dots_number, interval=20)
+
+
+
+
+class YoungAnimation:
+    
+    def __init__(self, tabluax):
+        self.tabluax = tabluax1
+        self.fig = plt.figure()
+        self.ax = plt.axes(xlim=(0, 10), ylim=(0, 10))
+
+    def draw(self, tableau, shift=0):
+        y_shape = len(tableau)
+        x_shape = len(tableau[0])
+        rgb = np.zeros([y_shape, x_shape, 3])
+        for i in range(len(tableau)):
+            for j in range(len(tableau[i])):
+                rgb[i][j][0] = 255/255
+                rgb[i][j][1] = 0/255
+                rgb[i][j][2] = 0/255
+        for i in range(len(tableau)):
+            for j in range(len(tableau[i])):
+                text = ''#tableau[i][j]
+                self.ax.text(j+shift+0.5, i+0.5, text, fontsize=20, ha="center", va="center")
+                frame = matplotlib.patches.Rectangle((j+shift, i), color=rgb[i][j], alpha=0.2, width=1, height=1)
+                self.ax.add_patch(frame)
+ 
+    def animate(self,i):
+        print(i)
+        self.ax.clear()
+        self.ax.set_xlim(0,70)
+        self.ax.set_ylim(0,70)
+        self.draw(self.tabluax[10*i][0])
+
+    def create_animation(self):
+        anim = animation.FuncAnimation(self.fig, self.animate, frames=len(tabluax)//20, interval = 1000)
+        anim.save('C:/result/myanimfast.gif', writer='ffmpeg')
+        print('Done')
+my_creater = YoungAnimation(tabluax)
+my_creater.create_animation()
